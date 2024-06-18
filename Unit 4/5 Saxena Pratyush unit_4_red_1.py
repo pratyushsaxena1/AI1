@@ -1,0 +1,321 @@
+# Imports
+
+import sys
+import random
+import copy
+
+# Basic functions
+
+def display_board(board):
+    print()
+    print(board["subboard_1"][0] + " | " + board["subboard_1"][1] + " | " + board["subboard_1"][2] + "     |     " + board["subboard_2"][0] + " | " + board["subboard_2"][1] + " | " + board["subboard_2"][2] + "     |     " + board["subboard_3"][0] + " | " + board["subboard_3"][1] + " | " + board["subboard_3"][2])
+    print("--|---|--     |     --|---|--     |     --|---|--")
+    print(board["subboard_1"][3] + " | " + board["subboard_1"][4] + " | " + board["subboard_1"][5] + "     |     " + board["subboard_2"][3] + " | " + board["subboard_2"][4] + " | " + board["subboard_2"][5] + "     |     " + board["subboard_3"][3] + " | " + board["subboard_3"][4] + " | " + board["subboard_3"][5])
+    print("--|---|--     |     --|---|--     |     --|---|--")
+    print(board["subboard_1"][6] + " | " + board["subboard_1"][7] + " | " + board["subboard_1"][8] + "     |     " + board["subboard_2"][6] + " | " + board["subboard_2"][7] + " | " + board["subboard_2"][8] + "     |     " + board["subboard_3"][6] + " | " + board["subboard_3"][7] + " | " + board["subboard_3"][8])
+    print("--------------------------------------------------")
+    print(board["subboard_4"][0] + " | " + board["subboard_4"][1] + " | " + board["subboard_4"][2] + "     |     " + board["subboard_5"][0] + " | " + board["subboard_5"][1] + " | " + board["subboard_5"][2] + "     |     " + board["subboard_6"][0] + " | " + board["subboard_6"][1] + " | " + board["subboard_6"][2])
+    print("--|---|--     |     --|---|--     |     --|---|--")
+    print(board["subboard_4"][3] + " | " + board["subboard_4"][4] + " | " + board["subboard_4"][5] + "     |     " + board["subboard_5"][3] + " | " + board["subboard_5"][4] + " | " + board["subboard_5"][5] + "     |     " + board["subboard_6"][3] + " | " + board["subboard_6"][4] + " | " + board["subboard_6"][5])
+    print("--|---|--     |     --|---|--     |     --|---|--")
+    print(board["subboard_4"][6] + " | " + board["subboard_4"][7] + " | " + board["subboard_4"][8] + "     |     " + board["subboard_5"][6] + " | " + board["subboard_5"][7] + " | " + board["subboard_5"][8] + "     |     " + board["subboard_6"][6] + " | " + board["subboard_6"][7] + " | " + board["subboard_6"][8])
+    print("--------------------------------------------------")
+    print(board["subboard_7"][0] + " | " + board["subboard_7"][1] + " | " + board["subboard_7"][2] + "     |     " + board["subboard_8"][0] + " | " + board["subboard_8"][1] + " | " + board["subboard_8"][2] + "     |     " + board["subboard_9"][0] + " | " + board["subboard_9"][1] + " | " + board["subboard_9"][2])
+    print("--|---|--     |     --|---|--     |     --|---|--")
+    print(board["subboard_7"][3] + " | " + board["subboard_7"][4] + " | " + board["subboard_7"][5] + "     |     " + board["subboard_8"][3] + " | " + board["subboard_8"][4] + " | " + board["subboard_8"][5] + "     |     " + board["subboard_9"][3] + " | " + board["subboard_9"][4] + " | " + board["subboard_9"][5])
+    print("--|---|--     |     --|---|--     |     --|---|--")
+    print(board["subboard_7"][6] + " | " + board["subboard_7"][7] + " | " + board["subboard_7"][8] + "     |     " + board["subboard_8"][6] + " | " + board["subboard_8"][7] + " | " + board["subboard_8"][8] + "     |     " + board["subboard_9"][6] + " | " + board["subboard_9"][7] + " | " + board["subboard_9"][8])
+    print()
+
+def get_subboard_winner(board):
+    if board[0] == board[1] == board[2] and board[0] == "X":
+        return 1
+    elif board[3] == board[4] == board[5] and board[3] == "X":
+        return 1
+    elif board[6] == board[7] == board[8] and board[6] == "X":
+        return 1
+    elif board[0] == board[3] == board[6] and board[0] == "X":
+        return 1
+    elif board[1] == board[4] == board[7] and board[1] == "X":
+        return 1
+    elif board[2] == board[5] == board[8] and board[2] == "X":
+        return 1
+    elif board[0] == board[4] == board[8] and board[0] == "X":
+        return 1
+    elif board[2] == board[4] == board[6] and board[2] == "X":
+        return 1
+    elif board[0] == board[1] == board[2] and board[0] == "O":
+        return -1
+    elif board[3] == board[4] == board[5] and board[3] == "O":
+        return -1
+    elif board[6] == board[7] == board[8] and board[6] == "O":
+        return -1
+    elif board[0] == board[3] == board[6] and board[0] == "O":
+        return -1
+    elif board[1] == board[4] == board[7] and board[1] == "O":
+        return -1
+    elif board[2] == board[5] == board[8] and board[2] == "O":
+        return -1
+    elif board[0] == board[4] == board[8] and board[0] == "O":
+        return -1
+    elif board[2] == board[4] == board[6] and board[2] == "O":
+        return -1
+    elif board.find(".") == -1:
+        return 0
+    else:
+        return None
+
+def get_winner(board):
+    key_list_x = []
+    key_list_o = []
+    games_finished = 0
+    for key in board:
+        winner = get_subboard_winner(board[key])
+        if winner == 1:
+            key_list_x.append(key)
+            games_finished += 1
+        elif winner == -1:
+            key_list_o.append(key)
+            games_finished += 1
+        elif winner == 0:
+            games_finished += 1
+    if "subboard_1" in key_list_x and "subboard_2" in key_list_x and "subboard_3" in key_list_x or "subboard_4" in key_list_x and "subboard_5" in key_list_x and "subboard_6" in key_list_x or "subboard_7" in key_list_x and "subboard_8" in key_list_x and "subboard_9" in key_list_x or "subboard_1" in key_list_x and "subboard_4" in key_list_x and "subboard_7" in key_list_x or "subboard_2" in key_list_x and "subboard_5" in key_list_x and "subboard_8" in key_list_x or "subboard_3" in key_list_x and "subboard_6" in key_list_x and "subboard_9" in key_list_x or "subboard_1" in key_list_x and "subboard_5" in key_list_x and "subboard_9" in key_list_x or "subboard_3" in key_list_x and "subboard_5" in key_list_x and "subboard_7" in key_list_x:
+        return "X"
+    elif "subboard_1" in key_list_o and "subboard_2" in key_list_o and "subboard_3" in key_list_o or "subboard_4" in key_list_o and "subboard_5" in key_list_o and "subboard_6" in key_list_o or "subboard_7" in key_list_o and "subboard_8" in key_list_o and "subboard_9" in key_list_o or "subboard_1" in key_list_o and "subboard_4" in key_list_o and "subboard_7" in key_list_o or "subboard_2" in key_list_o and "subboard_5" in key_list_o and "subboard_8" in key_list_o or "subboard_3" in key_list_o and "subboard_6" in key_list_o and "subboard_9" in key_list_o or "subboard_1" in key_list_o and "subboard_5" in key_list_o and "subboard_9" in key_list_o or "subboard_3" in key_list_o and "subboard_5" in key_list_o and "subboard_7" in key_list_o:
+        return "O"
+    elif games_finished == 9:
+        return "Tie"
+    else:
+        return "None"
+
+def is_valid_move(board, subboard, position):
+    try:
+        board_key = "subboard_" + str(subboard)
+        if board[board_key][position - 1] == "." and get_subboard_winner(board[board_key]) == None:
+            return True
+    except:
+        return False
+    return False
+
+def get_possible_moves(board, previous_move_index):
+    moves = []
+    for index, position in enumerate(board["subboard_" + str(previous_move_index)]):
+        if position == "." and get_subboard_winner(board["subboard_" + str(previous_move_index)]) == "None":
+            moves.append((previous_move_index, index + 1))
+    return moves
+
+def update_board(board, move, piece):
+    subboard, position = move
+    board_key = "subboard_" + str(subboard)
+    updated_board = copy.deepcopy(board)
+    updated_board[board_key] = board[board_key][:(position - 1)] + str(piece) + board[board_key][position:]
+    return updated_board
+
+# User move
+
+def get_user_move(board, previous_move_index):
+    if previous_move_index is None:
+        move_board = int(input("User, pick a board 1-9 to play a move in: "))
+        move_position = int(input("Now, pick a position in that board 1-9: "))
+        if is_valid_move(board, move_board, move_position):
+            move = (move_board, move_position)
+        else:
+            print("That's an invalid move. Please try again.")
+            move = get_user_move(board, previous_move_index)
+    else:
+        move_position = int(input("User, pick a position 1-9 in board " + str(previous_move_index) + ": "))
+        if is_valid_move(board, previous_move_index, move_position):
+            move = (previous_move_index, move_position)
+        else:
+            print("That's an invalid move. Please try again.")
+            move = get_user_move(board, previous_move_index)
+    return move
+
+# Random move
+
+def get_random_move(board, previous_move_index):
+    if previous_move_index is None:
+        subboard, position = random.randint(1, 9), random.randint(1, 9)
+        if is_valid_move(board, subboard, position):
+            move = (subboard, position)
+        else:
+            move = get_random_move(board, previous_move_index)
+    else:
+        possible_moves = get_possible_moves(board, previous_move_index)
+        if len(possible_moves) == 0:
+            previous_move_index = None
+            move = get_random_move(board, previous_move_index)
+        else:
+            move = random.choice(possible_moves)
+    return move
+
+# Aggressive move
+
+def get_aggressive_move(board, previous_move_index, token):
+    if token == "X":
+        correct_num = 1
+    else:
+        correct_num = -1
+    if previous_move_index is None:
+        move = get_random_move(board, previous_move_index)
+    else:
+        possible_moves = get_possible_moves(board, previous_move_index)
+        if len(possible_moves) == 0:
+            previous_move_index = None
+            move = get_aggressive_move(board, previous_move_index, token)
+        else:
+            for possible_move in possible_moves:
+                subboard, position = possible_move
+                new_board = update_board(board, possible_move, token)
+                if get_subboard_winner(new_board["subboard_" + str(subboard)]) == correct_num:
+                    move = possible_move
+                    break
+                else:
+                    move = get_random_move(board, previous_move_index)
+    return move
+
+# Level one move
+
+def get_one_move(board, previous_move_index, token):
+    if previous_move_index is None or board["subboard_" + str(previous_move_index)] == '.' or get_subboard_winner(board["subboard_" + str(previous_move_index)]) is not None:
+        move = get_one_move(board, random.randint(1, 9), token)
+    else:
+        move = (previous_move_index, make_move(board["subboard_" + str(previous_move_index)], token))
+    return move
+
+# Level two move
+
+def get_two_move(board, previous_move_index, token):
+    if previous_move_index is None or board["subboard_" + str(previous_move_index)] == '.' or get_subboard_winner(board["subboard_" + str(previous_move_index)]) is not None:
+        move = get_one_move(board, random.randint(1, 9), token)
+    else:
+        move = (previous_move_index, make_move(board["subboard_" + str(previous_move_index)], token))
+    return move
+
+# Level three move
+
+def get_three_move(board, previous_move_index, token):
+    if previous_move_index is None or board["subboard_" + str(previous_move_index)] == '.' or get_subboard_winner(board["subboard_" + str(previous_move_index)]) is not None:
+        move = get_one_move(board, random.randint(1, 9), token)
+    else:
+        move = (previous_move_index, make_move(board["subboard_" + str(previous_move_index)], token))
+    return move
+
+def make_new_board(board, index, insertion):
+    return board[:index] + insertion + board[index + 1:]
+
+def get_possible_boards(board, token):
+    return [make_new_board(board, index, token) for index, space in enumerate(board) if space == '.']
+
+def max_step(board, alpha, beta):
+    end_result = get_subboard_winner(board)
+    if end_result is not None:
+        return end_result
+    value = float('-inf')
+    for possible_board in get_possible_boards(board, 'X'):
+        value = max(value, min_step(possible_board, alpha, beta))
+        alpha = max(alpha, value)
+        if alpha >= beta:
+            break
+    return value
+
+def min_step(board, alpha, beta):
+    end_result = get_subboard_winner(board)
+    if end_result is not None:
+        return end_result
+    value = float('inf')
+    for possible_board in get_possible_boards(board, 'O'):
+        value = min(value, max_step(possible_board, alpha, beta))
+        beta = min(beta, value)
+        if alpha >= beta:
+            break
+    return value
+
+def make_move(board, token):
+    value, index = (-2, -1) if token == 'X' else (2, -1)
+    for possible_board in get_possible_boards(board, token):
+        element_comparisons, game_outcome = [possible_board[i] != board[i] for i in range(9)].index(True), min_step(possible_board, float('-inf'), float('inf')) if token == 'X' else max_step(possible_board, float('-inf'), float('inf'))
+        if (token == 'X' and game_outcome > value) or (token == 'O' and game_outcome < value):
+            value, index = game_outcome, element_comparisons
+    return index + 1
+
+# Play game functions
+
+def play_x_move(board, previous_move_index, first_player_type, second_player_type):
+    display_board(board)
+    if first_player_type == "USER":
+        move = get_user_move(board, previous_move_index)
+    elif first_player_type == "AGGRESSIVE":
+        move = get_aggressive_move(board, previous_move_index, "X")
+    elif first_player_type == "ONE":
+        move = get_one_move(board, previous_move_index, "X")
+    elif first_player_type == "TWO":
+        move = get_two_move(board, previous_move_index, "X")
+    elif first_player_type == "THREE":
+        move = get_three_move(board, previous_move_index, "X")
+    subboard, position = move
+    if board["subboard_" + str(position)].find(".") == -1 or get_subboard_winner(board["subboard_" + str(position)]) != None:
+        previous_move_index = None
+    else:
+        previous_move_index = position
+    board = update_board(board, move, "X")
+    winner = get_winner(board)
+    if winner == "X":
+        display_board(board)
+        print("\nPlayer 1 wins!\n")
+        sys.exit()
+    elif winner == "Tie":
+        display_board(board)
+        print("\nIt's a tie!\n")
+        sys.exit()
+    play_o_move(board, previous_move_index, first_player_type, second_player_type)
+
+def play_o_move(board, previous_move_index, first_player_type, second_player_type):
+    display_board(board)
+    if second_player_type == "USER":
+        move = get_user_move(board, previous_move_index)
+    elif second_player_type == "AGGRESSIVE":
+        move = get_aggressive_move(board, previous_move_index, "O")
+    elif second_player_type == "ONE":
+        move = get_one_move(board, previous_move_index, "O")
+    elif second_player_type == "TWO":
+        move = get_two_move(board, previous_move_index, "O")
+    elif second_player_type == "THREE":
+        move = get_three_move(board, previous_move_index, "O")
+    subboard, position = move
+    if board["subboard_" + str(position)].find(".") == -1 or get_subboard_winner(board["subboard_" + str(position)]) != None:
+        previous_move_index = None
+    else:
+        previous_move_index = position
+    board = update_board(board, move, "O")
+    winner = get_winner(board)
+    if winner == "O":
+        display_board(board)
+        print("\nPlayer 2 wins!\n")
+        sys.exit()
+    elif winner == "Tie":
+        display_board(board)
+        print("\nIt's a tie!\n")
+        sys.exit()
+    play_x_move(board, previous_move_index, first_player_type, second_player_type)
+
+def start_game():
+    print("This game is called Ultimate Tic Tac Toe. Essentially, it's a Tic Tac Toe game, but every square has another Tic Tac Toe grid inside it. Players attempt to win three small boards in a row to win.")
+    board = dict()
+    board["subboard_1"] = "........."
+    board["subboard_2"] = "........."
+    board["subboard_3"] = "........."
+    board["subboard_4"] = "........."
+    board["subboard_5"] = "........."
+    board["subboard_6"] = "........."
+    board["subboard_7"] = "........."
+    board["subboard_8"] = "........."
+    board["subboard_9"] = "........."
+    first_player_type = sys.argv[1].upper()
+    second_player_type = sys.argv[2].upper()
+    play_x_move(board, None, first_player_type, second_player_type)
+
+start_game()
+
+# Important Notes
+# move = (subboard, position)
